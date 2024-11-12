@@ -5,61 +5,59 @@ import java.util.*;
 
 public class Server {
 
-    private ServerSocket serverSocket = new ServerSocket();
+
+    private ServerSocket serverSocket;
     private int port;
 
     private ArrayList<LocalDateTime> timeList = new ArrayList<>();
-
-    public static void main(String[] args) throws IOException{
-        
-
-        System.out.println("Client Connected");
-        
-        InputStreamReader in = new InputStreamReader(socket.getInputStream());
-        BufferedReader reader = new BufferedReader(in);
-
-        String string = reader.readLine();
-        System.out.println("Client: " + string);
-
-
-    }
     
     public Server(int port){
         this.port = port;
     }
 
-    public serve(int serves){
+    public void serve(int serves){
+
+        //OPEN SERVER
         try {
-            //CREATE A SERVERSOCKET WITH PORT
             serverSocket = new ServerSocket(port);
             System.out.println("Server is reaching connection with Port" + port);
 
-            for (int i = 0; i < serves; i++){
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Cannot Open Server");
+            e.printStackTrace();
+        }
+
+
+        //ACCEPT SERVER
+        for (int i = 0; i < serves; i++) {
+            try {
                 //ACCEPT CONNECTION
                 Socket socket = serverSocket.accept();
-                System.out.println("New connection established");
+                //GET CURRENT TIME
+                LocalDateTime now = LocalDateTime.now();
+                timeList.add(now);
 
-                //GET CURRENT TIMESTAMP AND SAVE TO ARRAYLIST
-                getConnectedTimes();
+                //HANDLE CLIENT
+                System.out.println("New connection established: " + port + " at time: " + now);
 
+                new ClientHandler(socket, this).start();
+
+            } catch (IOException e) {
+                System.out.println("Error Serving Client: " + e.getMessage());
+                e.printStackTrace();
             }
-
-        } catch (IOException e) {
-            System.out.println("Error Serving Client: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
-    public void getConnectedTimes(){
+    public ArrayList getConnectedTimes(){
+        
         /*
             The server should record the time each client 
             was connected so that it can properly return 
             these values
         */
-        LocalDateTime now = LocalDateTime.now();
-        timeList.add(now);
-        System.out.println("New Connection Established at: " + now);
-
+        return this.timeList;
     }
 
     public void disconnect(){
@@ -72,4 +70,58 @@ public class Server {
         }
     }
 
+    public String factorize (int number){
+        ArrayList<Integer> factors = new ArrayList<>();
+        for (int i = 1; i <= number; i++) {
+            if (number % i == 0){
+                factors.add(i);
+            }
+        }
+        return factors.toString();
+    }
+
+    private class ClientHandler extends Thread{
+        private Socket sock;
+        private Server server;
+
+        public ClientHandler(Socket sock, Server server){
+            this.sock = sock;
+            this.server = server;
+        }
+
+        public void run(){
+            try(
+                PrintWriter out = new PrintWriter(sock.getOutputStream(), true); //autoflush
+                BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()))
+            ){
+                //HANDSHAKE
+                String passcode = in.readLine();
+                if(!passcode.equals("12345")){
+                    out.println("Denied Access");
+                    System.out.println("Incorrect Passcode Error");
+                    sock.close();
+                    return;
+                }
+
+                out.println("CONNECTION OK");
+
+                //Read and process factorizarion
+                String message = new String();
+                while(((message = in.readLine()) != null)){
+                    try {
+                        int number = Integer.parseInt(message);
+                        String factors = server.factorize(number);
+                        out.println(factors);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        out.println("ERROR EXCEPTION TRYING TO PROCESS NUMBER");
+                        e.printStackTrace();
+                    }
+                }
+                
+            } catch(Exception e){
+                System.out.println("Connection Lost " + sock.getRemoteSocketAddress());
+            }
+        }
+    }
 }
