@@ -7,29 +7,39 @@ public class Client{
 
     private String hostname = new String();
     private int port;
-    private Socket socket;
 
-    public Client(String hostname, int port){
+    private Socket socket;
+    private BufferedReader input;
+    private PrintWriter output;
+
+    public Client(String hostname, int port) throws IOException{
         this.hostname = hostname;
         this.port = port;
-    }
 
-    //connects to the server by pin
-    public void handshake(){
-        try{
-            socket = new Socket(hostname, port);
-            System.out.println("Connection Established");
+        try {
+            this.socket = new Socket(hostname, port);
+            System.out.println("Server is reaching connection with Port: " + port);
 
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            
-            out.println("12345");
-            String message = in.readLine();
-
-        }catch(IOException e){
+            this.output = new PrintWriter(socket.getOutputStream(), true);
+            this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Client: Cannot Open Server");
             e.printStackTrace();
         }
     }
+
+    //connects to the server by pin
+    public void handshake() throws IOException{
+        output.println("12345");
+        String response = input.readLine();
+
+        String key = "Connection Established";
+        if (!key.equals(response)){
+            throw new IOException("Sorry. Connection Password Denied\nServer Response: " + response);
+        }
+    }
+
     //disconnects from server
     public void disconnect(){
         try {
@@ -46,16 +56,13 @@ public class Client{
         String response = null;
         // int intInteger = Integer.parseInt(stringInteger);
         try {
-            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-            writer.println(stringInteger);
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            response = br.readLine();
+            output.println(stringInteger);
+            response = input.readLine();
             System.out.println("Factors: " + response);
             return response;
 
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println("Error with request: " + stringInteger);
             e.printStackTrace();
         }
 

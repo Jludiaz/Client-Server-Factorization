@@ -11,23 +11,17 @@ public class Server {
 
     private ArrayList<LocalDateTime> timeList = new ArrayList<>();
     
-    public Server(int port){
+    public Server(int port) throws IOException{
         this.port = port;
+
+        try{
+            this.serverSocket = new ServerSocket(port);
+        }catch(IOException e){
+            throw new IOException("Error with server constructor Port: " + port);
+        }
     }
 
     public void serve(int serves){
-
-        //OPEN SERVER
-        try {
-            serverSocket = new ServerSocket(port);
-            System.out.println("Server is reaching connection with Port" + port);
-
-        } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Cannot Open Server");
-            e.printStackTrace();
-        }
-
 
         //ACCEPT SERVER
         for (int i = 0; i < serves; i++) {
@@ -50,7 +44,7 @@ public class Server {
         }
     }
 
-    public ArrayList getConnectedTimes(){
+    public ArrayList<LocalDateTime> getConnectedTimes(){
         
         /*
             The server should record the time each client 
@@ -98,12 +92,10 @@ public class Server {
                 String passcode = in.readLine();
                 if(!passcode.equals("12345")){
                     out.println("Denied Access");
-                    System.out.println("Incorrect Passcode Error");
-                    sock.close();
                     return;
                 }
 
-                out.println("CONNECTION OK");
+                out.println("Connection Established");
 
                 //Read and process factorizarion
                 String message = new String();
