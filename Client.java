@@ -23,7 +23,6 @@ public class Client{
             this.output = new PrintWriter(socket.getOutputStream(), true);
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (Exception e) {
-            // TODO: handle exception
             System.out.println("Client: Cannot Open Server");
             e.printStackTrace();
         }
@@ -31,8 +30,10 @@ public class Client{
 
     //connects to the server by pin
     public void handshake() throws IOException{
+        System.out.println("Starting Handshake...");
         output.println("12345");
         String response = input.readLine();
+        System.out.println("HandShake Received Input: " + response);
 
         String key = "Connection Established";
         if (!key.equals(response)){
