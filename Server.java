@@ -23,17 +23,16 @@ public class Server {
         }catch(IOException e) {
             throw new IOException("Error with ServerSocket Constructor");
         }
-
-        //CLIENT HANDLER
-        HandshakeHandler client = new HandshakeHandler(this);
-        new Thread(client).start();
-        
+   
     }
 
     public void serve(int serves){
         //ACCEPT SERVER
         for (int i = 0; i < serves; i++) {
             try {
+                ClientHandler client = new ClientHandler(this.socket, this);
+                new Thread(client).start();
+
                 LocalDateTime now = LocalDateTime.now();
                 timeList.add(now);
                 System.out.println("New connection established: " + port + " at time: " + now);
@@ -79,6 +78,7 @@ public class Server {
     }
 
     //Handshake ClientHandler 
+    /*
     private class HandshakeHandler extends Thread{
         private Server server;
 
@@ -87,10 +87,6 @@ public class Server {
         }
 
         public void run(){
-
-            //Socket Accept
-            //while (!serverSocket.isClosed()) {
-                            //Socket Accept
 
             Socket socket = new Socket();
             try {
@@ -124,6 +120,7 @@ public class Server {
             }
         }
     }
+    */
 
     private class ClientHandler extends Thread{
         private final Server server;
@@ -143,6 +140,15 @@ public class Server {
                 out = new PrintWriter(socket.getOutputStream(), true); 
                 in = new BufferedReader(new InputStreamReader( 
                 socket.getInputStream()));
+
+                //PASSCODE
+                String passcode = in.readLine();
+                System.out.println(passcode);
+                if(!passcode.equals("12345")){
+                    //out.println("Denied Access");
+                    socket.close();
+                    return;
+                }
 
                 //Read and process factorizarion
                 String message = new String();
