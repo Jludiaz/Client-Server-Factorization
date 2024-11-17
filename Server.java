@@ -34,17 +34,9 @@ public class Server {
         //ACCEPT SERVER
         for (int i = 0; i < serves; i++) {
             try {
-                Socket serveSocket = new Socket();
-                //ACCEPT CONNECTION
-                //GET CURRENT TIME
                 LocalDateTime now = LocalDateTime.now();
                 timeList.add(now);
-
-                //HANDLE CLIENT
                 System.out.println("New connection established: " + port + " at time: " + now);
-
-                ClientHandler client = new ClientHandler(serveSocket, this);
-                new Thread(client).start();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -73,13 +65,17 @@ public class Server {
     }
 
     public String factorize (int number){
-        ArrayList<Integer> factors = new ArrayList<>();
-        for (int i = 1; i <= number; i++) {
-            if (number % i == 0){
-                factors.add(i);
+        try {
+            ArrayList<Integer> factors = new ArrayList<>();
+            for (int i = 1; i <= number; i++) {
+                if (number % i == 0) {
+                    factors.add(i);
+                }
             }
+            return "The number " + number + " has " + factors.size() + " factors";
+        } catch (Exception e) {
+            return "There was an exception on the server";
         }
-        return factors.toString();
     }
 
     //Handshake ClientHandler 
@@ -93,6 +89,9 @@ public class Server {
         public void run(){
 
             //Socket Accept
+            //while (!serverSocket.isClosed()) {
+                            //Socket Accept
+
             Socket socket = new Socket();
             try {
                 socket = serverSocket.accept();
@@ -110,11 +109,16 @@ public class Server {
                 String passcode = in.readLine();
                 System.out.println(passcode);
                 if(!passcode.equals("12345")){
-                    out.println("Denied Access");
+                    //out.println("Denied Access");
+                    socket.close();
                     return;
                 }
 
-                out.println("Connection Established");
+                //out.println("Connection Established");
+                ClientHandler clientHandler = new ClientHandler(socket, server);
+                new Thread(clientHandler).start();
+                
+
             }catch(IOException e){
                e.printStackTrace();
             }
@@ -122,8 +126,11 @@ public class Server {
     }
 
     private class ClientHandler extends Thread{
-        private Server server;
-        private Socket socket;
+        private final Server server;
+        private final Socket socket;
+
+        private BufferedReader in;
+        private PrintWriter out;
 
         public ClientHandler(Socket socket, Server server){
             this.server = server;
@@ -132,19 +139,16 @@ public class Server {
 
         public void run(){
 
-            BufferedReader in = null;
-            PrintWriter out = null;
-
             try{
-                out = new PrintWriter(this.socket.getOutputStream(), true); 
-                System.out.println("MARKER");
+                out = new PrintWriter(socket.getOutputStream(), true); 
                 in = new BufferedReader(new InputStreamReader( 
-                this.socket.getInputStream()));
+                socket.getInputStream()));
 
                 //Read and process factorizarion
                 String message = new String();
-
+    
                 while(((message = in.readLine()) != null)){
+
                     try {
                         int number = Integer.parseInt(message);
                         String factors = server.factorize(number);
@@ -153,6 +157,7 @@ public class Server {
                         out.println("ERROR EXCEPTION TRYING TO PROCESS NUMBER");
                         e.printStackTrace();
                     }
+
                 }
                 
             } catch(Exception e){
