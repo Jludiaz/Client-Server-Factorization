@@ -77,51 +77,6 @@ public class Server {
         }
     }
 
-    //Handshake ClientHandler 
-    /*
-    private class HandshakeHandler extends Thread{
-        private Server server;
-
-        public HandshakeHandler (Server server){
-            this.server = server;
-        }
-
-        public void run(){
-
-            Socket socket = new Socket();
-            try {
-                socket = serverSocket.accept();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            System.out.println("Starting run()");
-
-            try{
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true); //autoflush
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                //HANDSHAKE
-                String passcode = in.readLine();
-                System.out.println(passcode);
-                if(!passcode.equals("12345")){
-                    //out.println("Denied Access");
-                    socket.close();
-                    return;
-                }
-
-                //out.println("Connection Established");
-                ClientHandler clientHandler = new ClientHandler(socket, server);
-                new Thread(clientHandler).start();
-                
-
-            }catch(IOException e){
-               e.printStackTrace();
-            }
-        }
-    }
-    */
-
     private class ClientHandler extends Thread{
         private final Server server;
         private final Socket socket;
@@ -136,6 +91,13 @@ public class Server {
 
         public void run(){
 
+            Socket socket = new Socket();
+            try {
+                socket = serverSocket.accept();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             try{
                 out = new PrintWriter(socket.getOutputStream(), true); 
                 in = new BufferedReader(new InputStreamReader( 
@@ -144,10 +106,11 @@ public class Server {
                 //PASSCODE
                 String passcode = in.readLine();
                 System.out.println(passcode);
+           
                 if(!passcode.equals("12345")){
-                    //out.println("Denied Access");
+                    //out.println("Denied Access")
+                    out.println("couldn't handshake");
                     socket.close();
-                    return;
                 }
 
                 //Read and process factorizarion
@@ -160,7 +123,7 @@ public class Server {
                         String factors = server.factorize(number);
                         out.println(factors);
                     } catch (Exception e) {
-                        out.println("ERROR EXCEPTION TRYING TO PROCESS NUMBER");
+                        out.println("There was an exception on the server");
                         e.printStackTrace();
                     }
 

@@ -35,17 +35,6 @@ public class Client{
 
         output.println("12345");
         output.flush();
-
-        // try {
-        //     //String response = input.readLine();
-
-        //     String key = "Connection Established";
-        //     if (response != null && !response.equals(key)){
-        //         throw new IOException("Connection Password Denied\nServer Response: " + response);
-        //     }
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
     }
 
     //disconnects from server
@@ -66,7 +55,7 @@ public class Client{
         try {
             output.println(stringInteger);
             output.flush();
-            
+
             String response = input.readLine();
             System.out.println("Response received: " + response);
             return response;
