@@ -1,0 +1,63 @@
+commit 67e9e5358efe9f33f9d61a40ebccee3dee7b5c4f (HEAD -> main, origin/main)
+Merge: b427ae3 2c53b56
+Author: Jeremy <130429867+Jludiaz@users.noreply.github.com>
+Date:   Sun Nov 17 15:07:44 2024 -0500
+
+    Merge pull request #1 from Jludiaz/secondaryBranch
+    
+    Secondary branch
+
+commit 2c53b5694a6366eed17c911dddbab45d162a033d (origin/secondaryBranch, secondaryBranch)
+Author: Jeremy <jeremyludiaz@gmail.com>
+Date:   Sun Nov 17 15:06:57 2024 -0500
+
+    Passed all test cases. Erased my seperate HandshakeHandler class. Called ClientHandler inside serve and handled the passcode inside run. I didn't knwo that I have to do a handshake for all the clients
+
+commit 2636a6e967b76a8df2a1d096ba101fa713766040
+Author: Jeremy <jeremyludiaz@gmail.com>
+Date:   Sun Nov 17 14:39:13 2024 -0500
+
+    Removed HanshakeHandler:
+
+commit b427ae33af2a8c820705832caa18f5d971710991
+Author: Jeremy <jeremyludiaz@gmail.com>
+Date:   Sun Nov 17 14:21:49 2024 -0500
+
+    I cot my test cases to turn but i cannot run more than one client
+
+commit ae7da7f98b28d0f87634472fd2047a4fe2ad84d4
+Author: Jeremy <jeremyludiaz@gmail.com>
+Date:   Sun Nov 17 09:56:54 2024 -0500
+
+    I got handshake to work but I cannot get request to work
+
+commit 2a7bb6859277f6dc97e1f50f2b7172020d75caa2
+Author: Jeremy <jeremyludiaz@gmail.com>
+Date:   Fri Nov 15 15:37:07 2024 -0500
+
+    My client constructor had an error. I was defining the outputs and inputs before defining the socket
+
+commit b6ec3ecd199653cf78f72595344fbeeff211a49a
+Author: Jeremy <jeremyludiaz@gmail.com>
+Date:   Tue Nov 12 12:00:05 2024 -0500
+
+    Finished my code but I cannot pass the test cases due to a null pointer issue. I also added ClientHandler from lecture to handle multiple threads
+
+commit a0fd0dc438616b8e0161ee3dd3719430598e4406
+Author: Jeremy <jeremyludiaz@gmail.com>
+Date:   Fri Nov 8 17:35:26 2024 -0500
+
+    Implemented the fucntionalities into methods
+
+commit 1a43c89d73342b809a37e777803307b6ef620a47
+Author: Jeremy <jeremyludiaz@gmail.com>
+Date:   Fri Nov 8 14:35:22 2024 -0500
+
+    Client to Server Communication Success.
+    I was able to establish communication from Client.java to Server.java.
+
+commit 9c6bdabb0dee98b6ca29cf39fe4c177448818e28
+Author: Jeremy <jeremyludiaz@gmail.com>
+Date:   Mon Nov 4 14:22:33 2024 -0500
+
+    Lab Commit
